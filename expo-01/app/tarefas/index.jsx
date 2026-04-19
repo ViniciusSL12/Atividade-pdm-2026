@@ -20,45 +20,52 @@ export default function TarefasPage() {
   const toggleSwitch = useTaskFilter((state) => state.toggleSwitch);
   const router = useRouter();
   const queryClient = useQueryClient();
+
   const { data, isFetching } = useQuery({
     queryKey: ["tarefas"],
     queryFn: getTarefas,
   });
+
   const mutation = useMutation({
     mutationFn: adicionarTarefa,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tarefas"] });
     },
   });
+
   const [descricao, setDescricao] = useState("");
+
   const tasks = isEnabled ? data?.filter((t) => !t.concluida) : data;
 
-  async function handleAdicionarTarefaPress() {
+  function handleAdicionarTarefaPress() {
     if (descricao.trim() === "") {
-      Alert.alert("Descrição inválida", "Preencha a descrição da tarefa", [
-        { text: "OK", onPress: () => {} },
-      ]);
+      Alert.alert("Descrição inválida", "Preencha a descrição da tarefa");
       return;
     }
-    mutation.mutate({ descricao });
+
+    mutation.mutate({ descricao, concluida: false });
     setDescricao("");
   }
 
   return (
     <View style={styles.container}>
       {(isFetching || mutation.isPending) && <ActivityIndicator size="large" />}
+
       <TextInput
         style={styles.input}
         placeholder="Descrição"
         value={descricao}
         onChangeText={setDescricao}
       />
+
       <Button
         title="Adicionar Tarefa"
         onPress={handleAdicionarTarefaPress}
         disabled={mutation.isPending}
       />
+
       <View style={styles.hr} />
+
       <View style={styles.switchContainer}>
         <Text>Filtrar as concluídas: </Text>
         <Switch
@@ -69,12 +76,14 @@ export default function TarefasPage() {
           value={isEnabled}
         />
       </View>
+
       <View style={styles.hr} />
+
       <View style={styles.tasksContainer}>
         {tasks?.map((t) => (
           <Pressable
-            key={t.objectId}
-            onPress={() => router.push(`/tarefas/${t.objectId}`)}
+            key={t.id}
+            onPress={() => router.push(`/tarefas/${t.id}`)}
           >
             <Text style={t.concluida && styles.strikethroughText}>
               {t.descricao}
@@ -108,10 +117,9 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   strikethroughText: {
-    textDecorationLine: "line-through", // Key property for strikethrough
-    textDecorationStyle: "solid", // Optional: Style of the line
-    textDecorationColor: "red", // Optional: Color of the line (iOS only)
-    // Other styles like fontSize, fontWeight, color can also be applied
+    textDecorationLine: "line-through",
+    textDecorationStyle: "solid",
+    textDecorationColor: "red",
   },
   switchContainer: {
     flexDirection: "row",
