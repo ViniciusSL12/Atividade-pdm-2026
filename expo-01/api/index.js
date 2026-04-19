@@ -1,33 +1,32 @@
 import axios from "axios";
 
 const urlBase = "https://aos-2026-1-mu.vercel.app/api/tarefas";
-const headers = {
-  "X-Parse-Application-Id": "jnYc2snzzFZes5yr1TnS2l0ny7nB1Fyvlj8bq9wZ",
-  "X-Parse-JavaScript-Key": "iDYRd5O3Z2SnyfafWPneaqHiztKFSxFISMGqoBIY",
-};
+
 const headersJson = {
-  ...headers,
   "Content-Type": "application/json",
 };
 
 export async function getTarefas() {
-  const response = await axios.get(urlBase, {
-    headers: headers,
-  });
-  return response.data.results;
-}
-
-export async function getTarefa(id) {
-  const response = await axios.get(`${urlBase}/${id}`, {
-    headers: headers,
-  });
+  const response = await axios.get(urlBase);
   return response.data;
 }
 
-export async function adicionarTarefa(novaTarefa) {
-  const response = await axios.post(urlBase, novaTarefa, {
-    headers: headersJson,
-  });
+export async function getTarefa(id) {
+  const response = await axios.get(`${urlBase}/${id}`);
+  return response.data;
+}
+
+export async function adicionarTarefa(descricao) {
+  const response = await axios.post(
+    urlBase,
+    {
+      title: descricao,
+      completed: false,
+    },
+    {
+      headers: headersJson,
+    }
+  );
   return response.data;
 }
 
@@ -37,14 +36,12 @@ export async function atualizarTarefa(tarefaAtualizada) {
     tarefaAtualizada,
     {
       headers: headersJson,
-    },
+    }
   );
   return response.data;
 }
 
 export async function removerTarefa(id) {
-  const response = await axios.delete(`${urlBase}/${id}`, {
-    headers: headers,
-  });
+  const response = await axios.delete(`${urlBase}/${id}`);
   return response.data;
 }
