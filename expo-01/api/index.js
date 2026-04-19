@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const urlBase = "https://aos-2026-1-mu.vercel.app/api/tarefas";
+const urlBase = "https://aos-2026-1-mu.vercel.app/tarefas";
 
 const headersJson = {
   "Content-Type": "application/json",
