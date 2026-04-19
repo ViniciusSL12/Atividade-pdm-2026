@@ -16,12 +16,12 @@ export async function getTarefa(id) {
   return response.data;
 }
 
-export async function adicionarTarefa(descricao) {
+export async function adicionarTarefa(novaTarefa) {
   const response = await axios.post(
     urlBase,
     {
-      title: descricao,
-      completed: false,
+      descricao: novaTarefa.descricao,
+      concluida: false,
     },
     {
       headers: headersJson,
