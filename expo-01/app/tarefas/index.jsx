@@ -82,8 +82,8 @@ export default function TarefasPage() {
       <View style={styles.tasksContainer}>
         {tasks?.map((t) => (
           <Pressable
-            key={t.id}
-            onPress={() => router.push(`/tarefas/${t.id}`)}
+            key={t.objectId}
+            onPress={() => router.push(`/tarefas/${t.objectId}`)}
           >
             <Text style={t.concluida && styles.strikethroughText}>
               {t.descricao}
