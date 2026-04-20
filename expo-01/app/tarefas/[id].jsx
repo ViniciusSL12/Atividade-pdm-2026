@@ -16,13 +16,16 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TarefaDetalhesPage() {
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams();
+  const params = useLocalSearchParams();
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
+
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data: tarefa, isLoading } = useQuery({
     queryKey: ["tarefa", id],
     queryFn: () => getTarefa(id),
+    enabled: !!id,
   });
 
   const updateMutation = useMutation({
@@ -33,6 +36,10 @@ export default function TarefaDetalhesPage() {
       Alert.alert("Sucesso", "Tarefa atualizada com sucesso!");
       router.back();
     },
+    onError: (error) => {
+      console.log("Erro ao atualizar:", error?.response?.data || error?.message || error);
+      Alert.alert("Erro", "Não foi possível atualizar a tarefa.");
+    },
   });
 
   const deleteMutation = useMutation({
@@ -41,6 +48,10 @@ export default function TarefaDetalhesPage() {
       queryClient.invalidateQueries({ queryKey: ["tarefas"] });
       Alert.alert("Sucesso", "Tarefa removida com sucesso!");
       router.back();
+    },
+    onError: (error) => {
+      console.log("Erro ao excluir:", error?.response?.data || error?.message || error);
+      Alert.alert("Erro", "Não foi possível excluir a tarefa.");
     },
   });
 
@@ -55,14 +66,25 @@ export default function TarefaDetalhesPage() {
   }, [tarefa]);
 
   function handleUpdate() {
+    if (!id) {
+      Alert.alert("Erro", "ID da tarefa não encontrado.");
+      return;
+    }
+
     if (descricao.trim() === "") {
       Alert.alert("Erro", "A descrição não pode estar vazia.");
       return;
     }
-    updateMutation.mutate({ id: id, descricao, concluida });
+
+    updateMutation.mutate({ id, descricao, concluida });
   }
 
   function handleDelete() {
+    if (!id) {
+      Alert.alert("Erro", "ID da tarefa não encontrado.");
+      return;
+    }
+
     Alert.alert(
       "Confirmar exclusão",
       "Tem certeza que deseja excluir esta tarefa?",
@@ -73,7 +95,7 @@ export default function TarefaDetalhesPage() {
           style: "destructive",
           onPress: () => deleteMutation.mutate(id),
         },
-      ],
+      ]
     );
   }
 
