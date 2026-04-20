@@ -32,8 +32,11 @@ export async function adicionarTarefa(novaTarefa) {
 
 export async function atualizarTarefa(tarefaAtualizada) {
   const response = await axios.put(
-    `${urlBase}/${tarefaAtualizada.id}`,
-    tarefaAtualizada,
+    `${urlBase}/${tarefaAtualizada.objectId}`,
+    {
+      descricao: tarefaAtualizada.descricao,
+      concluida: tarefaAtualizada.concluida,
+    },
     {
       headers: headersJson,
     }

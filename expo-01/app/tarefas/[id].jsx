@@ -60,8 +60,8 @@ export default function TarefaDetalhesPage() {
 
   useEffect(() => {
     if (tarefa) {
-      setDescricao(tarefa.descricao);
-      setConcluida(tarefa.concluida || false);
+      setDescricao(tarefa.descricao ?? "");
+      setConcluida(tarefa.concluida ?? false);
     }
   }, [tarefa]);
 
@@ -76,7 +76,11 @@ export default function TarefaDetalhesPage() {
       return;
     }
 
-    updateMutation.mutate({ id, descricao, concluida });
+    updateMutation.mutate({
+      objectId: id,
+      descricao,
+      concluida,
+    });
   }
 
   function handleDelete() {
@@ -103,6 +107,14 @@ export default function TarefaDetalhesPage() {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (!tarefa) {
+    return (
+      <View style={styles.center}>
+        <Text>Tarefa não encontrada.</Text>
       </View>
     );
   }
